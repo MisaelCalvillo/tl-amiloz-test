@@ -19,6 +19,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// Health check endpoint
+app.get('/', (req: Request, res: Response) => {
+  res.status(200).json({ status: 'ok', message: 'Service is running' });
+});
+
 app.use('/api', userRoutes);
 // app.use('/api', verifyToken, offerRoutes);
 // app.use('/api', verifyToken, loanRoutes);
