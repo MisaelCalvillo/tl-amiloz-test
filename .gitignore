@@ -77,3 +77,10 @@ yarn-error.log
 # Output of 'tsc' command (TypeScript compiler)
 *.js.map
 *.d.ts
+# Elastic Beanstalk Files
+# .elasticbeanstalk/*
+# !.elasticbeanstalk/*.cfg.yml
+# !.elasticbeanstalk/*.global.yml
+
+# Serverless Files
+/.build

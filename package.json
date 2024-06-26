@@ -6,7 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma:studio": "npx prisma studio",
     "prisma:migrate": "npx prisma generate",
-    "start": "ts-node ./src/index.ts",
+    "prisma": "npx prisma:migrate",
+    "build": "tsc -p tsconfig.production.json",
+    "start": "node .build/index.js",
     "dev": "nodemon"
   },
   "keywords": [],
