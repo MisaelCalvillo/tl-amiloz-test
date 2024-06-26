@@ -16,3 +16,9 @@ global:
   repository: null
   sc: git
   workspace_type: Application
+
+eb_codebuild_settings:
+  CodeBuildServiceRole: beloz
+  ComputeType: 
+  Image: image
+  Timeout: minutes 
