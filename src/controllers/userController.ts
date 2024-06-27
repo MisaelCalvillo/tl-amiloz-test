@@ -17,8 +17,9 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
         phone, 
         roleId 
     } as any);
-    res.status(201).send({ id: user.id });
+    res.status(200).json(user);
   } catch (err) {
+    console.log(err);
     res.status(500).send('Error creating user.');
   }
 };
