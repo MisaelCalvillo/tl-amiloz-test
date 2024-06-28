@@ -5,10 +5,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import bodyParser from 'body-parser';
 import { PrismaClient } from '@prisma/client';
 import userRoutes from './routes/userRoutes';
-// import offerRoutes from './routes/offerRoutes';
+import offerRoutes from './routes/offerRoutes';
 // import loanRoutes from './routes/loanRoutes';
 // import paymentRoutes from './routes/paymentRoutes';
-// import verifyToken from './middleware/auth';
+
+import { testCalculateOffer } from './services/calculateOffer';
 
 export const prisma = new PrismaClient();
 const app = express();
@@ -41,7 +42,7 @@ app.get('/', async (req: Request, res: Response) => {
 });
 
 app.use('/api', userRoutes);
-// app.use('/api', verifyToken, offerRoutes);
+app.use('/api', offerRoutes);
 // app.use('/api', verifyToken, loanRoutes);
 // app.use('/api', verifyToken, paymentRoutes);
 
@@ -50,6 +51,7 @@ app.listen(port, async () => {
 
   try {
     await prisma.$queryRaw`SELECT 1`;
+    testCalculateOffer();
     console.log('Database connection established');
   } catch (error) {
     console.error('Database connection failed');

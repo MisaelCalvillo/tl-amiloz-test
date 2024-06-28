@@ -11,17 +11,17 @@ datasource db {
 }
 
 model User {
-  id                  String    @id @default(uuid())
-  idDocumentNumber    String    @unique
-  firstName           String
-  lastName            String
-  password            String
-  email               String    @unique
-  phone               String    @unique
-  roleId              String
-  role                Role      @relation(fields: [roleId], references: [id])
-  offers              Offer[]
-  loans               Loan[]
+  id                String    @id @default(uuid())
+  idDocumentNumber  String    @unique
+  firstName         String
+  lastName          String
+  password          String
+  email             String    @unique
+  phone             String    @unique
+  roleId            String
+  role              Role      @relation(fields: [roleId], references: [id])
+  offers            Offer[]
+  loans             Loan[]
 
   @@map("users")
 }
@@ -34,29 +34,43 @@ model Role {
   @@map("roles")
 }
 
+model PaymentFrequency {
+  id          String    @id
+  description String
+  days        Int
+  offers      Offer[]
+
+  @@map("payment_frequencies")
+}
+
 model Offer {
-  id          String    @id @default(uuid())
-  userId      String
-  amount      Float
-  rate        Float
-  term        Int
-  status      String
-  loanId      String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  user        User      @relation(fields: [userId], references: [id])
-  loan        Loan?     @relation(fields: [loanId], references: [id])
+  id                  String           @id @default(uuid())
+  userId              String
+  amount              Float
+  interestRate        Float
+  termInDays          Int
+  installments        Int
+  installmentAmount   Float
+  totalAmount         Float
+  paymentFrequencyId  String
+  status              String
+  loanId              String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  user                User             @relation(fields: [userId], references: [id])
+  loan                Loan?            @relation(fields: [loanId], references: [id])
+  paymentFrequency    PaymentFrequency @relation(fields: [paymentFrequencyId], references: [id])
 
   @@map("offers")
 }
 
 model Loan {
-  id              String      @id @default(uuid())
+  id              String    @id @default(uuid())
   userId          String
   totalAmount     Float
   remainingAmount Float
   status          String
-  user            User        @relation(fields: [userId], references: [id])
+  user            User      @relation(fields: [userId], references: [id])
   offers          Offer[]
 
   @@map("loans")

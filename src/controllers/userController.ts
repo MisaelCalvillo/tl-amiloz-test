@@ -34,7 +34,10 @@ export const login = async (req: Request, res: Response): Promise<Response<any, 
     const passwordIsValid = bcrypt.compareSync(password, user.password);
     if (!passwordIsValid) return res.status(401).send('Invalid password.');
 
-    const token = jwt.sign({ id: user.id, role: user.roleId }, 'supersecret', { expiresIn: 86400 });
+    const token = jwt.sign({ 
+      id: user.id, 
+      role: user.roleId 
+    }, 'supersecret', { expiresIn: 86400 });
     return res.status(200).send({ auth: true, token });
   } catch (err) {
     return res.status(500).send('Error logging in.');
