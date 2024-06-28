@@ -2,8 +2,9 @@ import { Request, Response } from 'express';
 import { OfferModel, CreateOfferData } from '../models/offer';
 import { calculateOffer } from '../services/calculateOffer';
 
-export const createOffer = async (req: Request, res: Response): Promise<void> => {
-  const { userId } = req.params;
+// TODO: Learn how to use the Request and Response types from Express
+export const createOffer = async (req: any, res: Response): Promise<void> => {
+  const { user } = req;
   const { 
     amount, 
     interestRate, 
@@ -54,7 +55,7 @@ export const createOffer = async (req: Request, res: Response): Promise<void> =>
     };
 
     // Create the offer
-    const offer = await OfferModel.create(userId, offerData);
+    const offer = await OfferModel.create(user.id, offerData);
     res.status(201).json(offer);
   } catch (error) {
     console.error('Error in createOffer:', error);

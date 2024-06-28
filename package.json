@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npx ts-node ./src/scripts/testOfferModel.ts && npx ts-node ./src/scripts/testPaymentFrequency.ts",
     "prisma:studio": "npx prisma studio",
     "prisma:migrate": "npx prisma migrate deploy && npx prisma generate && npx prisma db seed",
     "prisma": "npm run prisma:migrate",

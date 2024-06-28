@@ -15,20 +15,42 @@ export interface CreateOfferData {
 
 export class OfferModel {
   static async create(userId: string, data: CreateOfferData): Promise<Offer> {
-    return prisma.offer.create({
-      data: {
-        userId,
-        amount: data.amount,
-        interestRate: data.interestRate,
-        termInDays: data.termInDays,
-        installments: data.installments,
-        installmentAmount: data.installmentAmount,
-        totalAmount: data.totalAmount,
-        paymentFrequencyId: data.paymentFrequencyId,
-        status: data.status,
-        loanId: data.loanId,
-      },
+
+    console.log('OfferModel.create', userId, data);
+
+    // Check if PaymentFrequency exists
+    const paymentFrequency = await prisma.paymentFrequency.findUnique({
+      where: { id: data.paymentFrequencyId }
     });
+
+    if (!paymentFrequency?.id) {
+      throw new Error('Invalid payment frequency');
+    }
+
+    const dataToCreate = {
+      userId,
+      amount: data.amount,
+      interestRate: data.interestRate,
+      termInDays: data.termInDays,
+      installments: data.installments,
+      installmentAmount: data.installmentAmount,
+      totalAmount: data.totalAmount,
+      paymentFrequencyId: paymentFrequency.id,
+      status: data.status,
+      loanId: data.loanId,
+    }
+
+    console.log('OfferModel.create', dataToCreate);
+
+    const createdOffer = await prisma.offer.create({ 
+      data: dataToCreate, 
+      include: { 
+        paymentFrequency: true,
+        user: true
+      }
+    });
+
+    return createdOffer
   }
 
   static async findByUserId(userId: string): Promise<Offer[]> {

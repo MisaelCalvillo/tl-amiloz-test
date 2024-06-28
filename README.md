@@ -2,6 +2,7 @@
 
 Bienvenido a la prueba técnica para el puesto de Líder Técnico en nuestro negocio de préstamos. Esta prueba tiene como objetivo evaluar tu capacidad para diseñar e implementar un producto mínimo viable (MVP) de backend que simule un sistema de gestión de préstamos.
 
+## La API de producción de este proyecto puede ser encontrada en 
 ## Instrucciones
 
 Debes crear una aplicación backend con las siguientes funcionalidades:
@@ -71,3 +72,4 @@ Al concluir, envíanos la liga de tu fork para poder probarlo.
 
 ¡Buena Suerte!
 ¡Gracias por tu participación!
+
