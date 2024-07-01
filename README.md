@@ -1,75 +1,142 @@
-# Prueba Técnica para el Puesto de Líder Técnico
+# Loan Management System API
 
-Bienvenido a la prueba técnica para el puesto de Líder Técnico en nuestro negocio de préstamos. Esta prueba tiene como objetivo evaluar tu capacidad para diseñar e implementar un producto mínimo viable (MVP) de backend que simule un sistema de gestión de préstamos.
+## Overview
 
-## La API de producción de este proyecto puede ser encontrada en 
-## Instrucciones
+This project is a Loan Management System API built with Node.js, Express, and Prisma. It provides endpoints for user management, offer creation, loan approval, and payment processing.
 
-Debes crear una aplicación backend con las siguientes funcionalidades:
+Production API URL: https://tl-amiloz-test.onrender.com
 
-### Requisitos Funcionales
+## Table of Contents
 
-#### Crear un Usuario
+1. [Getting Started](#getting-started)
+   - [Prerequisites](#prerequisites)
+   - [Installation](#installation)
+   - [Running the Project](#running-the-project)
+2. [Project Structure](#project-structure)
+3. [Key Processes](#key-processes)
+   - [Offer Approval Process](#offer-approval-process)
+4. [API Endpoints](#api-endpoints)
+5. [Authentication](#authentication)
+6. [Database Schema](#database-schema)
+7. [Testing](#testing)
+8. [Deployment](#deployment)
 
-- **Endpoint:** POST /usuarios
-- **Descripción:** Este endpoint debe permitir la creación de un nuevo usuario en el sistema.
-- **Define el Request Body y Response**
+## Getting Started
 
-#### Crear Ofertas para un Usuario
+### Prerequisites
 
-- **Endpoint:** POST /usuarios/{userId}/ofertas
-- **Descripción:** Este endpoint debe permitir la creación de un conjunto de ofertas de préstamo para un usuario específico. Las ofertas pueden variar en montos, plazos, etc. Deben crearse al menos 2 ofertas por usuario. Las ofertas solo pueden ser creadas por un administrador.
-- **Define el Request Body y Response**
+- Node.js (v14 or later)
+- npm (v6 or later)
+- SQLite (for local development)
 
-#### Crear un Préstamo Basado en la Oferta Seleccionada
+### Installation
 
-- **Endpoint:** POST /usuarios/{userId}/prestamos
-- **Descripción:** Este endpoint debe permitir la creación de un préstamo basado en una oferta seleccionada para un usuario. El préstamo debe incluir un calendario de pagos, por ejemplo, si el préstamo es a 4 semanas, se deben crear 4 entradas donde cada una corresponde a un pago esperado.
-- **Define el Request Body y Response**
+1. Clone the repository:
+   ```
+   git clone https://github.com/your-username/loan-management-system.git
+   cd loan-management-system
+   ```
 
-#### Aplicar un Pago
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-- **Endpoint:** POST /prestamos/{loanId}/pagos
-- **Descripción:** Este endpoint debe permitir la aplicación de un pago a un préstamo existente. Al llegar al último pago, el préstamo debe marcarse como pagado. Nota: Un punto extra podría ser considerar pagos parciales. Por ejemplo, si el pago esperado es de 250 y solo se pagan 100, deben quedar 150 restantes, pero el pago sigue como pendiente.
-- **Define el Request Body y Response**
+3. Set up environment variables:
+   - Copy `.env.example` to `.env`
+   - Update the `DATABASE_URL` if needed
 
-### Puntos Extra
+4. Set up the database:
+   ```
+   npx prisma migrate dev
+   npx prisma db seed
+   ```
 
-#### Agregar Autenticación a los Endpoints
+### Running the Project
 
-Implementa un mecanismo de autenticación para todos los endpoints. Puedes usar autenticación basada en tokens (por ejemplo, JWT).
+1. Start the development server:
+   ```
+   npm run dev
+   ```
 
-#### Crear un Endpoint para Revertir un Pago
+2. The API will be available at `http://localhost:3000`
 
-- **Endpoint:** POST /pagos/{paymentId}/revertir
-- **Descripción:** Este endpoint debe permitir la reversión de un pago aplicado anteriormente, incluyendo toda la lógica que ello conlleva.
-- **Define el Request Body y Response**
+## Project Structure
 
-### Definición de Oferta
+```
+src/
+├── controllers/    # Request handlers
+├── middleware/     # Custom middleware (auth, error handling)
+├── models/         # Data models and database interactions
+├── routes/         # API route definitions
+├── services/       # Business logic
+├── types/          # TypeScript type definitions and enums
+├── utils/          # Utility functions
+└── index.ts        # Application entry point
+```
 
-Una oferta se entiende como el conjunto de opciones o variantes del préstamo. Por ejemplo, si decimos que un usuario tiene 2 ofertas, esto significa que tiene 2 configuraciones diferentes de préstamo, como montos y plazos distintos.
+## Key Processes
 
-### Esquema de la Base de Datos
+### Offer Approval Process
 
-Debes proponer los esquemas de la base de datos para el sistema. Puedes usar SQLite y subir el archivo de la base de datos en tu entrega. Asegúrate de que tu esquema pueda manejar las funcionalidades requeridas de manera efectiva.
+1. An admin creates an offer for a user through the `/api/users/:userId/offers` endpoint.
+2. The user can view their offers via the `/api/users/:userId/offers` endpoint.
+3. An admin approves an offer using the `/api/offers/:offerId/approve` endpoint.
+4. Upon approval, a loan is created with installments based on the offer terms.
+5. The offer status is updated to 'APPROVED', and a new loan record is created.
 
-### Usuarios
+## API Endpoints
 
-Debes crear dos tipos de usuarios:
+### User Management
+- `POST /api/users`: Create a new user
+- `GET /api/users/:userId`: Get user details
 
-1. **Administrador**: Puede crear ofertas para los usuarios.
-2. **Usuario**: Puede ver las ofertas y seleccionar una para crear un préstamo.
+### Offer Management
+- `POST /api/users/:userId/offers`: Create a new offer
+- `GET /api/users/:userId/offers`: Get offers for a user
+- `GET /api/offers/:offerId`: Get offer details
+- `POST /api/offers/calculate`: Calculate offer details
+- `POST /api/offers/:offerId/approve`: Approve an offer (Admin only)
 
-### Tiempo Esperado
+### Loan Management
+- `GET /api/loans/:loanId`: Get loan details
+- `PATCH /api/loans/:loanId/status`: Update loan status (Admin only)
+- `GET /api/loans`: Get all loans (Admin only)
 
-El tiempo esperado para completar esta prueba es de 10 horas. Por favor, planifica tu trabajo en consecuencia.
+### Payment Management
+- `POST /api/loans/:loanId/payments`: Make a payment
+- `GET /api/loans/:loanId/payments`: Get payments for a loan
 
-### Pautas de Entrega
+## Authentication
 
-Tu código debe estar escrito en un lenguaje backend de tu elección, idealmente Node.js. Si eliges otro lenguaje, proporciona instrucciones claras sobre cómo ejecutar tu proyecto.
-Haz un fork de este proyecto.
-Al concluir, envíanos la liga de tu fork para poder probarlo.
+The API uses JWT (JSON Web Tokens) for authentication. Include the JWT in the `x-access-token` header for authenticated requests.
 
-¡Buena Suerte!
-¡Gracias por tu participación!
+## Database Schema
 
+The main entities in the database are:
+- User
+- Role
+- Offer
+- Loan
+- Installment
+- Payment
+
+Refer to the `prisma/schema.prisma` file for detailed schema information.
+
+## Testing
+
+Run the test suite with:
+```
+npm test
+```
+
+## Deployment
+
+The API is deployed on Render. To deploy your own instance:
+
+1. Create a new Web Service on Render
+2. Connect your GitHub repository
+3. Set the environment variables (including `DATABASE_URL`)
+4. Deploy the main branch
+
+For more detailed instructions, refer to the [Render documentation](https://render.com/docs).
