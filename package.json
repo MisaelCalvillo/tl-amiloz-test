@@ -9,7 +9,12 @@
     "prisma": "npm run prisma:migrate",
     "build": "tsc -p tsconfig.production.json",
     "start": "npm run prisma && node .build/index.js",
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "migrate": "prisma migrate deploy",
+    "generate": "prisma generate",
+    "seed": "prisma db seed",
+    "migrate:dev": "prisma migrate dev",
+    "postmigrate:dev": "npm run generate"
   },
   "prisma": {
     "seed": "ts-node --transpile-only prisma/seed.ts"
@@ -19,13 +24,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@prisma/client": "^5.15.1",
+    "@prisma/client": "^5.16.1",
     "@types/dotenv": "^8.2.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -33,7 +39,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.9",
     "nodemon": "^3.1.4",
-    "prisma": "^5.15.1",
+    "prisma": "^5.16.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2"
   }
