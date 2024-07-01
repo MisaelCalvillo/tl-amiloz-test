@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '../index';
 import { User } from '@prisma/client';
-import { Roles } from '../types';
+import { LoanStatus, OfferStatus, PaymentStatus, Roles } from '../types';
 
 export const loanController = {
   // Create a loan from an approved offer
@@ -157,15 +157,15 @@ export const loanController = {
   },
 
   approveLoan: async (req: Request, res: Response) => {
-
     const { offerId } = req.params;
 
+    //TODO: Move this to a offer model
     const offer = await prisma.offer.findUnique({
       where: { id: offerId },
       include: { paymentFrequency: true },
     });
 
-    if (!offer || offer.status !== 'PENDING') {
+    if (!offer || offer.status !== OfferStatus.PENDING) {
       throw new Error('Invalid or already processed offer');
     }
 
@@ -176,7 +176,7 @@ export const loanController = {
           offerId: offer.id,
           totalAmount: offer.totalAmount,
           remainingAmount: offer.totalAmount,
-          status: 'ACTIVE',
+          status: LoanStatus.ACTIVE,
           approvedAt: new Date(),
         },
       });
@@ -190,7 +190,7 @@ export const loanController = {
             loanId: loan.id,
             amount: offer.installmentAmount,
             dueDate,
-            status: 'PENDING',
+            status: PaymentStatus.PENDING,
           },
         });
       });
@@ -199,7 +199,7 @@ export const loanController = {
   
       await prisma.offer.update({
         where: { id: offer.id },
-        data: { status: 'APPROVED' },
+        data: { status: OfferStatus.APPROVED },
       });
   
       return loan;
