@@ -166,10 +166,11 @@ export const loanController = {
     });
 
     if (!offer || offer.status !== OfferStatus.PENDING) {
-      throw new Error('Invalid or already processed offer');
+      res.status(400).json({ error: 'Invalid or already processed offer' });
+      return;
     }
 
-    return prisma.$transaction(async (prisma) => {
+    await prisma.$transaction(async (prisma) => {
       const loan = await prisma.loan.create({
         data: {
           userId: offer.userId,
@@ -204,6 +205,9 @@ export const loanController = {
   
       return loan;
     });
+
+    res.status(200).json({ message: 'Loan approved successfully' });
+    return;
   }
 };
 

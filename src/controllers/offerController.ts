@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { OfferModel, CreateOfferData } from '../models/offer';
 import { calculateOffer } from '../services/calculateOffer';
 import { User } from '@prisma/client';
-import { Roles } from '../types';
+import { OfferStatus, Roles } from '../types';
 
 // TODO: Learn how to use the Request and Response types from Express
 export const createOffer = async (req: any, res: Response): Promise<void> => {
@@ -12,20 +12,21 @@ export const createOffer = async (req: any, res: Response): Promise<void> => {
     interestRate, 
     termInDays, 
     paymentFrequencyId, 
-    status,
     loanId 
   } = req.body;
 
   try {
     // Input validation
-    if (!amount || !interestRate || !termInDays || !paymentFrequencyId || !status) {
+    if (!amount || !interestRate || !termInDays || !paymentFrequencyId) {
       res.status(400).json({ error: 'Missing required fields' });
       return;
     }
 
-    if (typeof amount !== 'number' || typeof interestRate !== 'number' || 
-        typeof termInDays !== 'number' || typeof paymentFrequencyId !== 'string' || 
-        typeof status !== 'string') {
+    if (
+      typeof amount !== 'number' || 
+      typeof interestRate !== 'number' || 
+      typeof termInDays !== 'number' || 
+      typeof paymentFrequencyId !== 'string') {
       res.status(400).json({ error: 'Invalid input types' });
       return;
     }
@@ -52,7 +53,7 @@ export const createOffer = async (req: any, res: Response): Promise<void> => {
       installmentAmount: calculatedOffer.paymentAmount,
       totalAmount: calculatedOffer.totalRepayment,
       paymentFrequencyId,
-      status,
+      status: OfferStatus.PENDING,
       loanId,
     };
 
