@@ -54,24 +54,59 @@ model Offer {
   totalAmount         Float
   paymentFrequencyId  String
   status              String
-  loanId              String?
+  loan                Loan?
   createdAt           DateTime         @default(now())
   updatedAt           DateTime         @updatedAt
   user                User             @relation(fields: [userId], references: [id])
-  loan                Loan?            @relation(fields: [loanId], references: [id])
   paymentFrequency    PaymentFrequency @relation(fields: [paymentFrequencyId], references: [id])
 
   @@map("offers")
 }
 
 model Loan {
-  id              String    @id @default(uuid())
+  id              String        @id @default(uuid())
   userId          String
+  offerId         String        @unique
   totalAmount     Float
   remainingAmount Float
   status          String
-  user            User      @relation(fields: [userId], references: [id])
-  offers          Offer[]
+  approvedAt      DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  user            User          @relation(fields: [userId], references: [id])
+  offer           Offer         @relation(fields: [offerId], references: [id])
+  installments    Installment[]
 
   @@map("loans")
+}
+
+model Installment {
+  id              String    @id @default(uuid())
+  loanId          String
+  amount          Float
+  dueDate         DateTime
+  status          String
+  paidAmount      Float     @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  loan            Loan      @relation(fields: [loanId], references: [id])
+  payments        Payment[]
+
+  @@map("installments")
+}
+
+model Payment {
+  id              String     @id @default(uuid())
+  installmentId   String
+  amount          Float
+  status          String
+  paymentPlatform String
+  platformPaymentId String?
+  paymentMethod   String?
+  paidAt          DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  installment     Installment @relation(fields: [installmentId], references: [id])
+
+  @@map("payments")
 }

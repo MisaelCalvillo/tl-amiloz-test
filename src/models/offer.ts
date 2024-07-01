@@ -14,6 +14,7 @@ export interface CreateOfferData {
 }
 
 export class OfferModel {
+  
   static async create(userId: string, data: CreateOfferData): Promise<Offer> {
 
     console.log('OfferModel.create', userId, data);

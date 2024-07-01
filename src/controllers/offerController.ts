@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import { OfferModel, CreateOfferData } from '../models/offer';
 import { calculateOffer } from '../services/calculateOffer';
+import { User } from '@prisma/client';
+import { Roles } from '../types';
 
 // TODO: Learn how to use the Request and Response types from Express
 export const createOffer = async (req: any, res: Response): Promise<void> => {
@@ -66,6 +68,34 @@ export const createOffer = async (req: any, res: Response): Promise<void> => {
     }
   }
 }
+
+export const getOffer = async (req: Request, res: Response): Promise<void> => {
+  const { offerId } = req.params;
+  const { user } = req as Request & { user: User };
+
+  try {
+    const offer = await OfferModel.findById(offerId);
+
+    if (!offer) {
+      res.status(404).json({ error: 'Offer not found' });
+      return;
+    }
+
+    console.log('User:', user);
+    console.log('Offer:', offer);
+
+    // Check if the user is the owner of the offer or an admin
+    if (offer.userId !== user.id || user.roleId !== Roles.ADMIN) {
+      res.status(403).json({ error: 'You do not have permission to view this offer' });
+      return;
+    }
+
+    res.status(200).json(offer);
+  } catch (error) {
+    console.error('Error fetching offer:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the offer' });
+  }
+};
 
 export const getOffersByUserId = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
